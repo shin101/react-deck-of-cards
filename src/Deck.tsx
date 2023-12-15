@@ -2,11 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Card from "./Card";
 
+interface CardData {
+  code: string;
+  image: string;
+}
+
 function Deck() {
-  const [cards, setCards] = useState([]);
-  const [deckId, setDeckId] = useState("");
-  const [started, setStarted] = useState(false);
-  const timerRef = useRef(null);
+  const [cards, setCards] = useState<CardData[]>([]);
+  const [deckId, setDeckId] = useState<string>("");
+  const [started, setStarted] = useState<boolean>(false);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     async function loadDeck() {
@@ -19,10 +24,10 @@ function Deck() {
   }, []);
 
   useEffect(() => {
-    if (deckId && started && cards.length < 52) {
-      timerRef.current = setInterval(async () => {
-        async function getCard(deckId) {
-          const res = await axios.get(
+    if (deckId && started && cards.length < 5) {
+      timerRef.current = window.setInterval(async () => {
+        async function getCard(deckId: string) {
+          const res = await axios.get<{ cards: CardData[] }>(
             `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
           );
 
@@ -34,17 +39,17 @@ function Deck() {
       }, 1000);
     }
 
-    return () => clearInterval(timerRef.current);
+    return () => clearInterval(timerRef.current as number);
   }, [cards, deckId, started]);
 
-  const handleClick = (evt) => {
+  const handleClick = (evt: React.MouseEvent) => {
     evt.preventDefault();
     setStarted((started) => !started);
   };
 
   return deckId ? (
     <div>
-      <button onClick={handleClick}>Gimme a card!</button>
+      <button onClick={handleClick}>Draw 5 cards..</button>
       <div style={{ display: "flex", flexWrap: "wrap", margin: "30px" }}>
         {cards.map((c) => (
           <Card key={c.code} img={c.image} />

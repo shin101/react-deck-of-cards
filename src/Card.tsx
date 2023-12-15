@@ -1,9 +1,12 @@
 import React from "react";
 import './index.css';
 
+interface ImgProps{
+  img: string
+}
  
 
-const Card = ({ img }) => {
+const Card = ({ img }:ImgProps ) => {
   return (
     <>
     <div className="card">
